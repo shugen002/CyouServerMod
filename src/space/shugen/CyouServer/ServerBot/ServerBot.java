@@ -24,7 +24,7 @@ public class ServerBot extends CyouPlugin {
 
     @Override
     public boolean onEnable() {
-        if (this.config.token != null && !this.config.token.isEmpty()) {
+        if (this.config.enable && this.config.token != null && !this.config.token.isEmpty()) {
             this.bot = new KHBot(this.config.token);
             this.serverupdate = new ServerUpdate(this);
         }
@@ -35,7 +35,9 @@ public class ServerBot extends CyouPlugin {
 
     @Override
     public boolean onDisable() {
-        this.serverupdate.dispose();
+        if(this.serverupdate!=null){
+            this.serverupdate.dispose();
+        }
         if (this.bot != null) {
             this.bot.dispose();
         }
