@@ -377,7 +377,9 @@ public class KHBot extends Thread {
         this.stop = true;
         this.timer.shutdownNow();
         this.connection.close();
+        this.client.dispatcher().executorService().shutdownNow();
         this.client.dispatcher().cancelAll();
+        this.client.connectionPool().evictAll();
     }
 }
 

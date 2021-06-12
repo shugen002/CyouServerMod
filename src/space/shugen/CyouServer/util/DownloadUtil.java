@@ -10,7 +10,7 @@ import java.io.IOException;
 public class DownloadUtil {
 
     private static DownloadUtil downloadUtil;
-    private final OkHttpClient okHttpClient;
+    private final OkHttpClient client;
 
     public static DownloadUtil get() {
         if (downloadUtil == null) {
@@ -20,7 +20,7 @@ public class DownloadUtil {
     }
 
     private DownloadUtil() {
-        okHttpClient = new OkHttpClient();
+        client = new OkHttpClient();
     }
 
     /**
@@ -29,7 +29,7 @@ public class DownloadUtil {
      */
     public void download(final String url, final String saveDir, final String filename, final OnDownloadListener listener) {
         Request request = new Request.Builder().url(url).build();
-        okHttpClient.newCall(request).enqueue(new Callback() {
+        client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 // 下载失败
@@ -58,5 +58,17 @@ public class DownloadUtil {
          * 下载失败
          */
         void onDownloadFailed();
+    }
+
+    public static void clean() {
+        if (downloadUtil != null) {
+            downloadUtil.dispose();
+        }
+    }
+
+    private void dispose() {
+        this.client.dispatcher().executorService().shutdownNow();
+        this.client.dispatcher().cancelAll();
+        this.client.connectionPool().evictAll();
     }
 }

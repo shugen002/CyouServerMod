@@ -6,6 +6,7 @@ import mindustry.mod.Plugin;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import space.shugen.CyouServer.ServerBot.ServerBot;
+import space.shugen.CyouServer.util.DownloadUtil;
 import space.shugen.CyouServer.util.Logs;
 import space.shugen.CyouServer.util.Scoreboard;
 
@@ -38,6 +39,7 @@ public class PluginLoader extends Plugin {
             public void dispose() {
                 logger.info("dispose");
                 serverBot.onDisable();
+                DownloadUtil.clean();
             }
 
             @Override

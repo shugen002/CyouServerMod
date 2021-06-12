@@ -141,7 +141,7 @@ public class ServerUpdate {
         public void run() {
             while (!stop) {
                 try {
-                    var message = workQueue.poll(10000, TimeUnit.MILLISECONDS);
+                    var message = workQueue.poll(1000, TimeUnit.MILLISECONDS);
                     if (message != null) {
                         switch (message.type) {
                             case "stop":
