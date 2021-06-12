@@ -1,0 +1,7 @@
+{
+  "name": "CyouServer",
+  "author": "Anuke",
+  "main": "space.shugen.CyouServer.PluginLoader",
+  "description": "A plugin to demonstrate some basic features.",
+  "version": 1.0
+}

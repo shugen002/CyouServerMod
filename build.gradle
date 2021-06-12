@@ -1,0 +1,73 @@
+apply plugin: "java"
+
+version '1.0'
+
+sourceCompatibility = 14
+
+sourceSets.main.java.srcDirs = ["src"]
+
+repositories {
+    mavenCentral()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+    maven { url 'https://www.jitpack.io' }
+}
+
+//compile with java 8 compatibility for everything except the annotation project
+configure(project) {
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+        targetCompatibility = 8
+        sourceCompatibility = 14
+        options.encoding = "UTF-8"
+        options.compilerArgs += ["-Xlint:deprecation"]
+        options.compilerArgs.addAll(['--release', '14'])
+    }
+}
+
+ext {
+    //the build number that this plugin is made for
+    mindustryVersion = 'v126.2'
+}
+
+dependencies {
+    compileOnly "com.github.Anuken.Arc:arc-core:$mindustryVersion"
+    compileOnly "com.github.Anuken.Mindustry:core:$mindustryVersion"
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.9.0"))
+
+    implementation("com.squareup.okhttp3:okhttp")
+    implementation("com.squareup.okhttp3:logging-interceptor")
+    compile "org.java-websocket:Java-WebSocket:1.5.1"
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.14.1'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.14.1'
+    compile group: 'org.apache.commons', name: 'commons-text', version: '1.9'
+    compile 'com.alibaba:fastjson:1.2.73'
+}
+
+jar {
+    archiveFileName = "${project.archivesBaseName}.jar"
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    from(rootDir) {
+        include "plugin.json"
+        include "log4j2.xml"
+    }
+}
+
+task run(dependsOn: jar, type: JavaExec){
+    classpath = layout.buildDirectory.files("build/run/server-release.jar")
+    workingDir = layout.buildDirectory.dir("run")
+    standardInput = System.in
+    args "host"
+
+    copy{
+        from {
+            layout.buildDirectory.dir("libs/CyouServerMod.jar")
+        }
+        into {
+            layout.buildDirectory.dir("run/config/mods")
+        }
+    }
+}
